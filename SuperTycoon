@@ -1,0 +1,186 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>SuperTycoon!</title>
+    <style>
+      body {
+        padding: 20px;
+      }
+      
+      button {
+        border-radius: 5px;
+        background-color: #00ff00;
+        border: 2px solid #0d0;
+        color: #fff;
+      }
+      
+    </style>
+  </head>
+  <body>
+    <b><h1><span id="title"></span></h1></b>
+    <br>
+    <h2>所持金：<span id="money"></span></h2>
+    <h2>伐採レベル：<span id="woodworklevel"></span></h2>
+    <h2>木材の数：<span id="woodcount"></span></h2>
+    <button data-id="木材をすべて売る">木材をすべて売る</button>
+    <button data-id="伐採レベルを1上げる">伐採レベルをレベル<span id="woodworklevelup"></span>にアップグレード</button>
+    <script>
+      let 所持金 = 0;
+      let 所持金2 = "0";
+      let 木材の数 = 0;
+      let 木材の数2 = "0";
+      let 木材伐採レベル = 0;
+      let 木材ロジック = 0;
+      let スタート従業員タイマー = 0;
+      let gameover = false
+      
+      document.querySelectorAll("button").forEach(btn => {
+        btn.addEventListener("click", () => {
+          if (!gameover) {
+            const type = btn.dataset.id;
+          
+            if (type === "木材をすべて売る") {
+              所持金 = 所持金 + 木材の数 * 70;
+              木材の数 = 0;
+            } else if (type === "伐採レベルを1上げる") {
+              if (!(木材ロジック < 0)) {
+                if (!(所持金 == 0)) {
+                  木材伐採レベル++
+                  所持金 = 所持金 - Math.pow(木材伐採レベル, 3.4565);
+                }
+              }
+            }
+          }
+        });
+      });
+      
+      setInterval( function() {
+        if (!gameover) {
+          if (木材伐採レベル == 1) {
+            木材の数++
+          } else {
+            木材の数 = 木材の数 + Math.pow(1.4, 木材伐採レベル);
+          }
+        }
+        
+        if (木材伐採レベル != 0) {
+          所持金 = 所持金 - Math.pow(1.745,木材伐採レベル);
+        }
+        
+        スタート従業員タイマー++
+        
+        if (スタート従業員タイマー > 12) {
+          所持金 = 所持金 - 40;
+        }
+        
+      }, 1000)
+      
+      setInterval( function() {
+        所持金 = Math.floor(所持金);
+        木材の数 = Math.floor(木材の数);
+        木材ロジック = 所持金 - Math.pow(木材伐採レベル, 1.5);
+        
+        if (所持金 <= Math.pow(木材伐採レベル, 1.4)+1) {
+          document.querySelector("button[data-id='伐採レベルを1上げる']").style.backgroundColor = "#ff0000";
+          document.querySelector("button[data-id='伐採レベルを1上げる']").style.borderColor = "#d00";
+        } else {
+          document.querySelector("button[data-id='伐採レベルを1上げる']").style.backgroundColor = "#00ff00";
+          document.querySelector("button[data-id='伐採レベルを1上げる']").style.borderColor = "#0d0";
+        }
+        
+        if (木材の数 == 0) {
+          document.querySelector("button[data-id='木材をすべて売る']").style.backgroundColor = "#ff0000";
+          document.querySelector("button[data-id='木材をすべて売る']").style.borderColor = "#d00";
+        } else {
+          document.querySelector("button[data-id='木材をすべて売る']").style.backgroundColor = "#00ff00";
+          document.querySelector("button[data-id='木材をすべて売る']").style.borderColor = "#0d0";
+        }
+
+        
+        if (所持金 < 1000) {
+          所持金2 = "$" + 所持金;
+        } else if ((所持金 >= 1000)&&(所持金 < 1000000)) {
+          if (所持金 % 100 === 0) {
+            所持金2= "$" + 所持金/1000 + "K";
+          } else {
+            所持金2 = "$" + Math.floor(所持金/100)/10 + "K";
+          }
+        } else if ((所持金 >= 1000000)&&(所持金 < 1000000000)) {
+          if (所持金 % 100000 === 0) {
+            所持金2 = "$" + 所持金/1000000 + "M"
+          } else {
+            所持金2 = "$" + Math.floor(所持金/100000)/10 + "M"
+          }
+        } else if ((所持金 >= 1e9)&&(所持金 < 1e12)) {
+          if (所持金 % 1e8 === 0) {
+            所持金2 = "$" + 所持金/1e9 + "B"
+          } else {
+            所持金2 = "$" + Math.floor(所持金/1e8)/10 + "B"
+          }
+        } else if ((所持金 >= 1e12)&&(所持金 < 1e15)) {
+          if (所持金 % 1e11 === 0) {
+           所持金2 = "$" + 所持金/1e12 + "T"
+          } else {
+            所持金2 = "$" + Math.floor(所持金/1e11)/10 + "T"
+          }
+        } else if ((所持金 >= 1e15)&&(所持金 < 1e18)) {
+          if (所持金 % 1e14 === 0) {
+            所持金2 = "$" + 所持金/1e15 + "Qa"
+          } else {
+            所持金2 = "$" + Math.floor(所持金/1e14)/10 + "Qa"
+          }
+        }
+        
+        if (木材の数 < 1000) {
+          木材の数2 = 木材の数;
+        } else if ((木材の数 >= 1000)&&(木材の数 < 1000000)) {
+          if (木材の数 % 100 === 0) {
+            木材の数2= 木材の数/1000 + "K";
+          } else {
+            木材の数2 = Math.floor(木材の数/100)/10 + "K";
+          }
+        } else if ((木材の数 >= 1000000)&&(木材の数 < 1000000000)) {
+          if (木材の数 % 100000 === 0) {
+            木材の数2 = 木材の数/1000000 + "M"
+          } else {
+            木材の数2 = Math.floor(木材の数/100000)/10 + "M"
+          }
+        } else if ((木材の数 >= 1e9)&&(木材の数 < 1e12)) {
+          if (木材の数 % 1e8 === 0) {
+            木材の数2 = 木材の数/1e9 + "B"
+          } else {
+            木材の数2 = Math.floor(木材の数/1e8)/10 + "B"
+          }
+        } else if ((木材の数 >= 1e12)&&(木材の数 < 1e15)) {
+          if (所持金 % 1e11 === 0) {
+            木材の数2 = 木材の数/1e12 + "T"
+          } else {
+            木材の数2 = Math.floor(木材の数/1e11)/10 + "T"
+          }
+        } else if ((木材の数 >= 1e15)&&(木材の数 < 1e18)) {
+          if (木材の数 % 1e14 === 0) {
+            木材の数2 = "$" + 木材の数/1e15 + "Qa"
+          } else {
+            木材の数2 = "$" + Math.floor(木材の数/1e14)/10 + "Qa"
+          }
+        }
+        
+        woodcount.innerHTML = 木材の数2;
+        woodworklevel.innerHTML = 木材伐採レベル;
+        woodworklevelup.innerHTML = 木材伐採レベル+1;
+        money.innerHTML = 所持金2;
+        if (!gameover) {
+          title.innerHTML = "SuperTycoon!";
+        } else if (gameover) {
+          title.innerHTML = "GameOver... \nPlease reload the page and try again!"
+        }
+        
+        if (所持金 < 0) {
+          gameover = true;
+        }
+          
+      }, 100)
+    </script>
+  </body>
+</html>
